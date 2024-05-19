@@ -14,7 +14,7 @@ test_names = []
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    master_nb_path = "helloworld.ipynb"
+    master_nb_path = "helloworld_private.ipynb"
     master_nb = nbformat.read(master_nb_path, as_version=4)
 
     for cell in master_nb["cells"]:
@@ -27,12 +27,12 @@ if __name__ == '__main__':
             except:
                 print("Failed to execute cell: ")
                 print(cell["code"])
-
+    # print(test_names)
     tests_func = []
     for name in test_names:
         eval(f"tests_func.append({name})")
 
-    dir_name = "lab1"
+    dir_name = "lab2"
     nb_names = glob.glob(f"{dir_name}/*.ipynb")
 
     print("Students summary: ")
@@ -75,7 +75,6 @@ if __name__ == '__main__':
                     skip_cnt += 1
                     test_info[i][2] += 1
                     print(f"{test_names[i]} - Skipped")
-
             print(
                 f"Summary for {students_info[student_idx][0]}: Successes-{success_cnt}/{len(tests_func)},"
                 f" Failed-{fail_cnt}/{len(tests_func)}, Skipped-{skip_cnt}/{len(tests_func)}")
