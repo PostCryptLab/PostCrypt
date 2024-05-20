@@ -14,25 +14,31 @@ test_names = []
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    master_nb_path = "helloworld_private.ipynb"
+    master_nb_name = "McEliece"
+    # master_nb_name = "helloworld"
+    dir_name = "lab3"
+
+    master_nb_path = master_nb_name + "_private.ipynb"
     master_nb = nbformat.read(master_nb_path, as_version=4)
 
     for cell in master_nb["cells"]:
         metadata = cell['metadata']
         if "cell_type" in metadata and metadata["cell_type"] == "test":
-            test_names.append(metadata["test_name"])
+            print(metadata)
+            test_names.append(metadata["cell_name"])
             test_info.append([0, 0, 0])
+
+        if cell["cell_type"] == "code":
             try:
                 exec(cell['source'])
             except:
                 print("Failed to execute cell: ")
                 print(cell["code"])
-    # print(test_names)
+
     tests_func = []
     for name in test_names:
         eval(f"tests_func.append({name})")
 
-    dir_name = "lab2"
     nb_names = glob.glob(f"{dir_name}/*.ipynb")
 
     print("Students summary: ")
@@ -44,13 +50,16 @@ if __name__ == '__main__':
             cells = nb['cells']
             for cell in cells:
                 metadata = cell['metadata']
-
+                # print(cell)
                 if cell['cell_type'] == "code":
                     try:
                         exec(cell['source'])
-                    except:
+                    except RuntimeError as e:
                         print("Failed to execute cell: ")
+
                         print(cell["code"])
+                        # if "cell_name" in metadata["cell"]:
+                        #     print("Try to replace cell")
 
                 if "cell_type" in metadata and metadata["cell_type"] == "student_info":
                     code_cell = cell["source"]

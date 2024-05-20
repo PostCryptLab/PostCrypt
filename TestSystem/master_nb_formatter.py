@@ -48,42 +48,34 @@ def process_code_block(code, metadata):
 
         new_code_cell += line + "\n"
 
-    # print(metadata)
     if not is_visible:
         return ""
     return new_code_cell
 
 
 if __name__ == '__main__':
-    master_nb_path = "helloworld.ipynb"
+    nb_name = "McEliece"
+    master_nb_path = nb_name + ".ipynb"
     master_nb = nbformat.read(master_nb_path, as_version=4)
     master_nb_private = copy.deepcopy(master_nb)
 
     for i, cell in enumerate(master_nb["cells"]):
-        metadata = cell['metadata']
-        # print(metadata)
         if cell['cell_type'] == 'code':
             try:
                 cell["source"] = process_code_block(cell["source"], cell['metadata'])
                 master_nb_private["cells"][i]["metadata"] = copy.deepcopy(cell['metadata'])
-                # print(metadata)
-                # print(master_nb_private["cells"][i]["metadata"])
                 if cell["source"] == "":
                     pass
-                    # master_nb["cells"].remove(cell)
             except:
                 pass
-        # master_nb_private["cells"][i]["metadata"] = cell['metadata']
 
-    nbformat.write(master_nb_private, "helloworld_private.ipynb", version=4)
+    nbformat.write(master_nb_private, nb_name + "_private.ipynb", version=4)
 
     for i, cell in enumerate(master_nb["cells"]):
-        # print(cell)
         if cell["cell_type"] == "code" and cell["source"] == "":
             master_nb["cells"].remove(cell)
-        # print(cell["metadata"])
 
-    nbformat.write(master_nb, "helloworld_pub.ipynb", version=4)
+    nbformat.write(master_nb, nb_name + "_pub.ipynb", version=4)
 
 
 
