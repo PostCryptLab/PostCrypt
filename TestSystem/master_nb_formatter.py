@@ -54,7 +54,7 @@ def process_code_block(code, metadata):
 
 
 if __name__ == '__main__':
-    nb_name = "McEliece"
+    nb_name = "helloworld"
     master_nb_path = nb_name + ".ipynb"
     master_nb = nbformat.read(master_nb_path, as_version=4)
     master_nb_private = copy.deepcopy(master_nb)

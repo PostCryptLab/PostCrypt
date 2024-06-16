@@ -4,7 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 import nbformat as nbformat
-# import sys
+import sys
 import glob
 import types
 
@@ -14,9 +14,13 @@ test_names = []
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    master_nb_name = "McEliece"
-    # master_nb_name = "helloworld"
-    dir_name = "lab3"
+    if len(sys.argv) != 2:
+        print("Bad arguments")
+        exit()
+
+    # master_nb_name = "McEliece"
+    master_nb_name = r"C:\Users\ivanz\uni\Inż\PostCrypt\TestSystem\helloworld"
+    dir_name = sys.argv[1]
 
     master_nb_path = master_nb_name + "_private.ipynb"
     master_nb = nbformat.read(master_nb_path, as_version=4)
@@ -24,7 +28,7 @@ if __name__ == '__main__':
     for cell in master_nb["cells"]:
         metadata = cell['metadata']
         if "cell_type" in metadata and metadata["cell_type"] == "test":
-            print(metadata)
+            # print(metadata)
             test_names.append(metadata["cell_name"])
             test_info.append([0, 0, 0])
 
