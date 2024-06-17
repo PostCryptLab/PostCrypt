@@ -1,4 +1,5 @@
 # This is a sample Python script.
+import os.path
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
@@ -19,8 +20,14 @@ if __name__ == '__main__':
         exit()
 
     # master_nb_name = "McEliece"
+
     master_nb_name = r"C:\Users\ivanz\uni\Inż\PostCrypt\TestSystem\helloworld"
+
+    isSingleNb = False
+
     dir_name = sys.argv[1]
+    if not os.path.isdir(sys.argv[1]):
+        isSingleNb = True
 
     master_nb_path = master_nb_name + "_private.ipynb"
     master_nb = nbformat.read(master_nb_path, as_version=4)
@@ -43,9 +50,15 @@ if __name__ == '__main__':
     for name in test_names:
         eval(f"tests_func.append({name})")
 
-    nb_names = glob.glob(f"{dir_name}/*.ipynb")
+    if isSingleNb:
+        nb_names = [dir_name]
+    else:
+        nb_names = glob.glob(f"{dir_name}/*.ipynb")
 
-    print("Students summary: ")
+    if not isSingleNb:
+        print("Students summary: ")
+    else:
+        print("Student test summary: ")
 
     for student_idx, file_name in enumerate(nb_names):
         try:
@@ -62,6 +75,7 @@ if __name__ == '__main__':
                         print("Failed to execute cell: ")
 
                         print(cell["code"])
+                        # TODO cell replacement
                         # if "cell_name" in metadata["cell"]:
                         #     print("Try to replace cell")
 
@@ -94,6 +108,7 @@ if __name__ == '__main__':
         except RuntimeError as e:
             print(f"Error with notebook: {file_name}")
 
-    print("Tests summary: ")
-    for i, test in enumerate(test_info):
-        print(f"{test_names[i]}: Successes-{test[0]}, Failed-{test[1]}, Skipped-{test[2]}")
+    if not isSingleNb:
+        print("Tests summary: ")
+        for i, test in enumerate(test_info):
+            print(f"{test_names[i]}: Successes-{test[0]}, Failed-{test[1]}, Skipped-{test[2]}")

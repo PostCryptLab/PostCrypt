@@ -18,10 +18,10 @@
             <p>No documents.</p>
         {% endif %}
 
-        <!-- Upload form. Note enctype attribute! -->
         <form action="{% url "results-view" %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ message }}
+            {{ form.labName }}
+
             <p>{{ form.non_field_errors }}</p>
 
             <p>{{ form.docfile.label_tag }} {{ form.docfile.help_text }}</p>
@@ -32,6 +32,11 @@
             </p>
 
             <p><input type="submit" value="Upload"/></p>
+
+        </form>
+        <form action="{% url "results-view" %}" method="get">
+            {{ form.labName }}
+            <p><input type="submit" value="Test Lab"/></p>
         </form>
     </body>
 </html>
