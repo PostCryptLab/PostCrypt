@@ -16,3 +16,4 @@ Possible config fields
 - NAME
 - NRALBUM
 
+"code" cell could contain #Implement...<Code>...#End blocks. This blocks is missing in public notebook version and have to be implemented. 
