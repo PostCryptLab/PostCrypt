@@ -6,7 +6,17 @@
     </head>
 
     <body>
-        <!-- List of uploaded documents -->
+        <a href="{% url 'login' %}">
+            <button type="button">Login</button>
+        </a>
+
+        <a href="{% url 'register' %}">
+            <button type="button">Register</button>
+        </a>
+
+        
+
+
         {% if documents %}
             All documents in the database:
             <ul>
@@ -18,7 +28,7 @@
             <p>No documents.</p>
         {% endif %}
 
-        <form action="{% url "results-view" %}" method="post" enctype="multipart/form-data">
+        <form action="{% url 'results-view' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.labName }}
 
@@ -32,9 +42,9 @@
             </p>
 
             <p><input type="submit" value="Upload"/></p>
-
         </form>
-        <form action="{% url "results-view" %}" method="get">
+
+        <form action="{% url 'results-view' %}" method="get">
             {{ form.labName }}
             <p><input type="submit" value="Test Lab"/></p>
         </form>
