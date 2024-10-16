@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
 from .forms import RegistrationForm
+from django.contrib.auth.decorators import login_required
 
 # import myproject.settings
 from pathlib import Path
@@ -16,6 +17,16 @@ def my_view(request):
     # Document.objects.all().delete()
     context = {'documents': documents, 'form': DocumentForm()}
     return render(request, 'list.html', context)
+
+@login_required # type: ignore
+def courses_view(request):
+    documents = Document.objects.all()
+    context = {
+        'documents': documents, 
+        'form': DocumentForm(),
+        'user': request.user
+        }
+    return render(request, 'dashboard.html', context)
 
 def my_results_view(request):
     print("Result view")
@@ -58,8 +69,8 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Automatyczne logowanie po rejestracji
-            return redirect('my-view')  # Przekierowanie na główną stronę lub inną
+            login(request, user)  
+            return redirect('my-view') 
     else:
         form = RegistrationForm()
     
