@@ -7,9 +7,27 @@
 <body>
     <h1>Hello, {{ user.username }}!</h1>
 
+
+    {% if documents %}
+            All documents in the database:
+            <ul>
+                {% for document in documents %}
+                    <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No documents.</p>
+        {% endif %}
+
+        <form action="{% url 'results-view' %}" method="get">
+            {{ form.labName }}
+            <p><input type="submit" value="Test Lab"/></p>
+        </form>
+    </body>
+
     <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
-        <button type="submit">Logout</button>
+        <p><button type="submit">Logout</button></p>
     </form>
 </body>
 </html>
