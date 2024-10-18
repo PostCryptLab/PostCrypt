@@ -8,7 +8,7 @@
     {% for line in response %}
         <p> {{ line }}</p>
     {% endfor %}
-    <form action="{% url "my-view" %}">
+    <form action="{% url 'dashboard' %}">
         <p><input type="submit" value="Back"/></p>
     </form>
 </body>
