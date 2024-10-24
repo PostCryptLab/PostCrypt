@@ -2,23 +2,21 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Minimal Django File Upload Example</title>
+        <title>Some COOL app name</title>
     </head>
 
     <body>
-        <!-- List of uploaded documents -->
-        {% if documents %}
-            All documents in the database:
-            <ul>
-                {% for document in documents %}
-                    <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No documents.</p>
-        {% endif %}
+        <p>
+            <a href="{% url 'login' %}">
+                <button type="button">Login</button>
+            </a>
 
-        <form action="{% url "results-view" %}" method="post" enctype="multipart/form-data">
+            <a href="{% url 'register' %}">
+                <button type="button">Register</button>
+            </a>
+        </p>
+        
+        <form action="{% url 'results-view' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.labName }}
 
@@ -32,11 +30,6 @@
             </p>
 
             <p><input type="submit" value="Upload"/></p>
+        </form>
 
-        </form>
-        <form action="{% url "results-view" %}" method="get">
-            {{ form.labName }}
-            <p><input type="submit" value="Test Lab"/></p>
-        </form>
-    </body>
-</html>
+        </html>
