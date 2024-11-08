@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
 from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 # import myproject.settings
 from pathlib import Path
@@ -29,6 +30,10 @@ def courses_view(request):
     return render(request, 'dashboard.html', context)
 
 def my_results_view(request):
+
+    lab_tester_script_path = os.path.join(settings.BASE_DIR, 'scripts', 'TestSystem', 'labTester.py')
+    lab_path = os.path.join(settings.MEDIA_ROOT, 'labs', request.GET['labName'])
+
     print("Result view")
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -40,7 +45,7 @@ def my_results_view(request):
 
             newdoc.save()
 
-            proc = subprocess.run(["python3", r"C:\Users\ivanz\uni\Inż\PostCrypt\TestSystem\main.py",
+            proc = subprocess.run(["python3", lab_tester_script_path,
                                    newdoc.docfile.path], universal_newlines=False,
                                   stdout=subprocess.PIPE, encoding="utf-8")
 
@@ -49,8 +54,8 @@ def my_results_view(request):
 
     if request.method == 'GET':
         print(request.GET)
-        proc = subprocess.run(["python3", r"C:\Users\ivanz\uni\Inż\PostCrypt\TestSystem\main.py",
-                               r"C:\Users\ivanz\uni\Inż\PostCrypt\testsite\media\labs\{}".format(request.GET['labName'])], universal_newlines=False,
+        proc = subprocess.run(["python3", lab_tester_script_path, lab_path], 
+                              universal_newlines=False,
                               stdout=subprocess.PIPE, encoding="utf-8")
 
         # for text_line in proc.stdout.splitlines():

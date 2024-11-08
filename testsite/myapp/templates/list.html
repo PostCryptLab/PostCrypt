@@ -3,18 +3,22 @@
     <head>
         <meta charset="utf-8">
         <title>Some COOL app name</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     </head>
 
     <body>
-        <p>
-            <a href="{% url 'login' %}">
-                <button type="button">Login</button>
-            </a>
+        <div class="buttons">
+            <p>
+                <a href="{% url 'login' %}">
+                    <button type="button" class="button is-primary">Login</button>
+                </a>
 
-            <a href="{% url 'register' %}">
-                <button type="button">Register</button>
-            </a>
-        </p>
+                <a href="{% url 'register' %}">
+                    <button type="button" class="button is-link">Register</button>
+                    
+                </a>
+            </p>
+        </div>
         
         <form action="{% url 'results-view' %}" method="post" enctype="multipart/form-data">
             {% csrf_token %}
