@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from .models import Document
 from .forms import DocumentForm
 from django.urls import reverse_lazy
@@ -7,16 +7,18 @@ from django.contrib.auth import login
 from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.http import HttpResponse
+from nbconvert import HTMLExporter
+import nbformat
 
 # import myproject.settings
 from pathlib import Path
 import subprocess
 import os
 
-def my_view(request):
-    documents = Document.objects.all()
+def home(request):
     # Document.objects.all().delete()
-    context = {'documents': documents, 'form': DocumentForm()}
+    context = {'form': DocumentForm()}
     return render(request, 'list.html', context)
 
 @login_required # type: ignore
@@ -80,3 +82,18 @@ def register(request):
         form = RegistrationForm()
     
     return render(request, 'register.html', {'form': form})
+
+@login_required
+def view_document(request, document_id):
+    document = get_object_or_404(Document, id=document_id)
+    
+    with document.docfile.open('rb') as f:
+        notebook_content = f.read().decode('utf-8')
+    
+    notebook_node = nbformat.reads(notebook_content, as_version=4)
+    
+    html_exporter = HTMLExporter()
+    html_exporter.template_name = 'classic'
+    body, _ = html_exporter.from_notebook_node(notebook_node)
+    
+    return HttpResponse(body, content_type='text/html')
