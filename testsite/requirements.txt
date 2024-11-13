@@ -1,1 +1,2 @@
 django>=3.0,<4.0
+nbconvert>=7.16.4
