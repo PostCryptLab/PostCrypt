@@ -27,9 +27,18 @@
         </form>
     </body>
 
+    <h2>Create a New Lab</h2>
+    <form action="{% url 'create_lab' %}" method="post">
+        {% csrf_token %}
+        {{ lab_choice_form.labname.label_tag }}
+        {{ lab_choice_form.labname }}
+        <p><input type="submit" value="Add Lab"/></p>
+    </form>
+    
     <form action="{% url 'logout' %}" method="post">
         {% csrf_token %}
         <p><button type="submit">Logout</button></p>
     </form>
+    
 </body>
 </html>

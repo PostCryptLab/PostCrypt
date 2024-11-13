@@ -1,6 +1,6 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Document
-from .forms import DocumentForm
+from .models import Document, LabChoice
+from .forms import DocumentForm, LabChoiceForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
@@ -27,7 +27,8 @@ def courses_view(request):
     context = {
         'documents': documents, 
         'form': DocumentForm(),
-        'user': request.user
+        'user': request.user,
+        'lab_choice_form': LabChoiceForm()
         }
     return render(request, 'dashboard.html', context)
 
@@ -97,3 +98,15 @@ def view_document(request, document_id):
     body, _ = html_exporter.from_notebook_node(notebook_node)
     
     return HttpResponse(body, content_type='text/html')
+
+@login_required
+def create_lab(request):
+    if request.method == 'POST':
+        form = LabChoiceForm(request.POST)
+        if form.is_valid():
+            # Create a new LabChoice instance and save it
+            LabChoice.objects.create(name=form.cleaned_data['labname'])
+            return redirect('dashboard')  # Redirect to a relevant page, like 'dashboard'
+    else:
+        form = LabChoiceForm()
+    return render(request, 'dashboard.html', {'lab_choice_form': form})

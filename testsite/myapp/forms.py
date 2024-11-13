@@ -1,4 +1,5 @@
 from django import forms
+from .models import LabChoice
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
@@ -12,7 +13,15 @@ lab_choices = [
 
 class DocumentForm(forms.Form):
     docfile = forms.FileField(label='Select a file')
-    labName = forms.CharField(label="Choose lab number", widget=forms.Select(choices=lab_choices))
+    labName = forms.ModelChoiceField(
+        label="Choose lab number",
+        queryset=LabChoice.objects.all(),
+        widget=forms.Select
+    )
+
+class LabChoiceForm(forms.Form):
+
+    labname = forms.CharField(label="Lab Name", max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Enter lab name'}))
 
 
 class RegistrationForm(UserCreationForm):
