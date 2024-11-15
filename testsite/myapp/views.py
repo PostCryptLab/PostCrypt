@@ -17,7 +17,7 @@ import subprocess
 import os
 
 def home(request):
-    # Document.objects.all().delete()
+    Document.objects.all().delete()
     context = {'form': DocumentForm()}
     return render(request, 'list.html', context)
 
