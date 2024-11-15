@@ -11,8 +11,8 @@ lab_choices = [
 
 
 class DocumentForm(forms.Form):
-    docfile = forms.FileField(label='Select a file')
-    labName = forms.CharField(label="Choose lab number", widget=forms.Select(choices=lab_choices))
+    docfile = forms.FileField(label='Wybierz plik')
+    labName = forms.CharField(label="Wybierz nazwe labolatorium", widget=forms.Select(choices=lab_choices))
 
 
 class RegistrationForm(UserCreationForm):
