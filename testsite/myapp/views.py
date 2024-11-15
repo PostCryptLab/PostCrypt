@@ -31,6 +31,21 @@ def courses_view(request):
         }
     return render(request, 'dashboard.html', context)
 
+@login_required
+def view_document(request, document_id):
+    document = get_object_or_404(Document, id=document_id)
+    
+    with document.docfile.open('rb') as f:
+        notebook_content = f.read().decode('utf-8')
+    
+    notebook_node = nbformat.reads(notebook_content, as_version=4)
+    
+    html_exporter = HTMLExporter()
+    html_exporter.template_name = 'classic'
+    body, _ = html_exporter.from_notebook_node(notebook_node)
+    
+    return HttpResponse(body, content_type='text/html')
+
 def my_results_view(request):
 
     lab_tester_script_path = os.path.join(settings.BASE_DIR, 'scripts', 'TestSystem', 'labTester.py')
@@ -82,18 +97,3 @@ def register(request):
         form = RegistrationForm()
     
     return render(request, 'register.html', {'form': form})
-
-@login_required
-def view_document(request, document_id):
-    document = get_object_or_404(Document, id=document_id)
-    
-    with document.docfile.open('rb') as f:
-        notebook_content = f.read().decode('utf-8')
-    
-    notebook_node = nbformat.reads(notebook_content, as_version=4)
-    
-    html_exporter = HTMLExporter()
-    html_exporter.template_name = 'classic'
-    body, _ = html_exporter.from_notebook_node(notebook_node)
-    
-    return HttpResponse(body, content_type='text/html')
