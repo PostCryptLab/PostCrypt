@@ -35,7 +35,7 @@ def courses_view(request):
 def my_results_view(request):
 
     lab_tester_script_path = os.path.join(settings.BASE_DIR, 'scripts', 'TestSystem', 'labTester.py')
-    lab_path = os.path.join(settings.MEDIA_ROOT, 'labs', request.GET['labName'])
+    lab_path = os.path.join(settings.LABS_ROOT, request.GET['labName'])
 
     print("Result view")
     if request.method == 'POST':
@@ -78,7 +78,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  
-            return redirect('my-view') 
+            return redirect('dashboard')
     else:
         form = RegistrationForm()
     

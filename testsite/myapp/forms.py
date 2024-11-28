@@ -2,6 +2,8 @@ from django import forms
 from .models import LabChoice
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+import re
+from django.core.exceptions import ValidationError
 
 
 lab_choices = [
@@ -22,6 +24,15 @@ class DocumentForm(forms.Form):
 class LabChoiceForm(forms.Form):
 
     labname = forms.CharField(label="Lab Name", max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Enter lab name'}))
+
+    def clean_labname(self):
+        labname = self.cleaned_data['labname']
+        # Ensure safe directory name
+        if not re.match(r'^[a-zA-Z0-9_-]+$', labname):
+            raise ValidationError(
+                'Lab name can only contain letters, numbers, underscores and hyphens'
+            )
+        return labname
 
 
 class RegistrationForm(UserCreationForm):
