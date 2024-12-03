@@ -1,4 +1,5 @@
 # lokalne pomocnicze skrypty
 testsite/getenv.sh
-testsite/myapp/__pycache__/*
-testsite/myapp/media/*
+
+testsite/myapp/__pycache__/
+testsite/myapp/media/

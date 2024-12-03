@@ -44,7 +44,7 @@ def my_results_view(request):
             file = request.FILES['docfile']
             newdoc = Document(docfile=file)
 
-            newdoc.lab_type = request.POST['labName']
+            newdoc.lab_type = form.cleaned_data['labName'].name
 
             newdoc.save()
 

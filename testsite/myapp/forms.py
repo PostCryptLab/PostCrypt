@@ -10,8 +10,11 @@ class DocumentForm(forms.Form):
     labName = forms.ModelChoiceField(
         label="Choose lab number",
         queryset=LabChoice.objects.all(),
-        widget=forms.Select
+        widget=forms.Select,
+        to_field_name='name'
     )
+
+
 
 class LabChoiceForm(forms.Form):
     labname = forms.CharField(label="Lab Name", max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Enter lab name'}))
