@@ -5,14 +5,6 @@ from django.contrib.auth.forms import UserCreationForm
 import re
 from django.core.exceptions import ValidationError
 
-
-lab_choices = [
-    ('lab1', 'lab1'),
-    ('lab2', 'lab2'),
-    ('lab3', 'lab3'),
-]
-
-
 class DocumentForm(forms.Form):
     docfile = forms.FileField(label='Select a file')
     labName = forms.ModelChoiceField(
@@ -22,8 +14,8 @@ class DocumentForm(forms.Form):
     )
 
 class LabChoiceForm(forms.Form):
-
     labname = forms.CharField(label="Lab Name", max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Enter lab name'}))
+    template_file = forms.FileField(label='Upload Lab Template')
 
     def clean_labname(self):
         labname = self.cleaned_data['labname']

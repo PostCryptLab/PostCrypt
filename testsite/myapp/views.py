@@ -35,7 +35,7 @@ def courses_view(request):
 def my_results_view(request):
 
     lab_tester_script_path = os.path.join(settings.BASE_DIR, 'scripts', 'TestSystem', 'labTester.py')
-    lab_path = os.path.join(settings.LABS_ROOT, request.GET['labName'])
+    lab_path = os.path.join(settings.LABS_ROOT, request.POST['labName'])
 
     print("Result view")
     if request.method == 'POST':
@@ -102,11 +102,30 @@ def view_document(request, document_id):
 @login_required
 def create_lab(request):
     if request.method == 'POST':
-        form = LabChoiceForm(request.POST)
+        form = LabChoiceForm(request.POST, request.FILES)
         if form.is_valid():
+            lab_name = form.cleaned_data['labname']
+            template_file = request.FILES['template_file']
+            
+            # Create the lab directory if it doesn't exist
+            lab_dir = os.path.join(settings.LABS_ROOT, lab_name)
+            os.makedirs(lab_dir, exist_ok=True)
+            
+            # Save the template file
+            file_path = os.path.join(lab_dir, template_file.name)
+            with open(file_path, 'wb+') as destination:
+                for chunk in template_file.chunks():
+                    destination.write(chunk)
+            
             # Create a new LabChoice instance and save it
-            LabChoice.objects.create(name=form.cleaned_data['labname'])
-            return redirect('dashboard')  # Redirect to a relevant page, like 'dashboard'
+            LabChoice.objects.create(name=lab_name)
+            return redirect('dashboard')
     else:
         form = LabChoiceForm()
-    return render(request, 'dashboard.html', {'lab_choice_form': form})
+    
+    context = {
+        'lab_choice_form': form,
+        'documents': Document.objects.all(),
+        'form': DocumentForm(),
+    }
+    return render(request, 'dashboard.html', context)

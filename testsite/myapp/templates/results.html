@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">py
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Results</title>
 </head>
 <body>
     {% for line in response %}
-        <p> {{ line }}</p>
+        <p>{{ line }}</p>
     {% endfor %}
-    <form action="{% url 'dashboard' %}">
-        <p><input type="submit" value="Back"/></p>
-    </form>
+
+    {% if user.is_authenticated %}
+        <form action="{% url 'dashboard' %}">
+            <p><input type="submit" value="Back to Dashboard"/></p>
+        </form>
+    {% else %}
+        <form action="{% url 'home' %}">
+            <p><input type="submit" value="Back to Home"/></p>
+        </form>
+    {% endif %}
 </body>
 </html>
