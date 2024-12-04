@@ -1,50 +1,98 @@
+{% load static %}
+
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
     <meta charset="utf-8">
-    <title>Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostCrypt</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+    <!-- <link rel="stylesheet" href="{% static 'styles.css' %}"> -->
+    <style>
+        html {
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        
+        .content-wrap {
+            flex: 1;
+        }
+        
+        .footer {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            margin-top: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello, {{ user.username }}!</h1>
 
-
-    {% if documents %}
-            All documents in the database:
-            <ul>
-                {% for document in documents %}
-                
-                    <li><a href="{% url 'view_document' document.id %}">{{ document.docfile.name  }}</a></li>
-                    <!-- <li><a href="{{ document.docfile.url }}">{{ document.docfile.name }}</a></li> -->
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No documents.</p>
-        {% endif %}
-
-        <form action="{% url 'results-view' %}" method="get">
-            {{ form.labName }}
-            <p><input type="submit" value="Test Lab"/></p>
-        </form>
-    </body>
-
-    <h2>Create a New Lab</h2>
-    <form action="{% url 'create_lab' %}" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div>
-            {{ lab_choice_form.labname.label_tag }}
-            {{ lab_choice_form.labname }}
+<!-- Pasek nawigacyjny -->
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="#">
+            <strong>Prowadzący {{ user.username }}</strong>
+        </a>
+    </div>
+    <div class="navbar-end">
+        <div class="navbar-item">
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="button is-light">Logout</button>
+            </form>
         </div>
-        <div>
-            {{ lab_choice_form.template_file.label_tag }}
-            {{ lab_choice_form.template_file }}
+    </div>
+</nav>
+
+<!-- Główna zawartość strony -->
+<div class="content-wrap">
+     <!-- Sekcja przeglądania dokumentów -->
+     <section class="section">
+        <div class="container">
+            <h1 class="title">Wysłane Laboratoria</h1>
+
+            {% if documents %}
+                <h2 class="subtitle">wszystkie laboratoria w bazie danych:</h2>
+                <ul>
+                    {% for document in documents %}
+                        <li>
+                            <a href="{% url 'view_document' document.id %}">{{ document.docfile.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No documents.</p>
+            {% endif %}
         </div>
-        <p><input type="submit" value="Add Lab"/></p>
-    </form>
-    
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <p><button type="submit">Logout</button></p>
-    </form>
-    
+    </section>
+
+    <!-- Sekcja automatycznego testowania laboratoriów -->
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Przetestuj Laboratorium</h1>
+            <form action="{% url 'results-view' %}" method="get">
+                <div class="field">
+                    <label class="label">{{ form.labName.label }}</label>
+                    <div class="control">
+                        {{ form.labName }}
+                    </div>
+                </div>
+                <p><button type="submit" class="button is-primary">Test Lab</button></p>
+            </form>
+        </div>
+    </section>
+</div>
+</div>
+
+<!-- Stopka -->
+{% include 'footer.html' %}
+
 </body>
 </html>

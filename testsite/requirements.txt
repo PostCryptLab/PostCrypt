@@ -1,2 +1,6 @@
-django>=3.0,<4.0
-nbconvert>=7.16.4
+nbformat~=5.10.4
+nbconvert~=7.16.4
+sympy~=1.13.2
+numpy~=1.26.4
+django>=5.1.1
+django-widget-tweaks~=1.5.0
