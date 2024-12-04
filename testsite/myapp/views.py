@@ -36,6 +36,7 @@ def courses_view(request):
     return render(request, 'dashboard.html', context)
 
 def my_results_view(request):
+
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
@@ -46,7 +47,7 @@ def my_results_view(request):
 
             # Pass the full path of the file for single file testing
             tester = LabTester(newdoc.docfile.path, None)
-            results = tester.run_tests()
+            results = tester.run_tests(newdoc.docfile.path),
             
             context = {
                 'results': results,

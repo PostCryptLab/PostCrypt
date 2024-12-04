@@ -20,7 +20,7 @@ class LabTester:
         self.test_names = []
         self.tests_func = []
         
-    def run_tests(self):
+    def run_tests(self, single_lab_path = None):
         # Get the base directory - either test_dir or the directory of the lab file
 
         # Look for master notebook in the base directory
@@ -49,8 +49,10 @@ class LabTester:
         results = []
         
         if self.test_dir is None:
+            if single_lab_path is None:
+                raise SyntaxError("Wrong argument expression there is no path to single labolatory")
             # Single notebook testing
-            return self._test_notebook(self.lab_name)
+            return self._test_notebook(single_lab_path)
         else:
             # Get all notebooks in directory except private and public versions
             nb_names = glob.glob(f"{self.test_dir}/*.ipynb")
