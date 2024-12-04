@@ -10,6 +10,8 @@ from django.conf import settings
 from django.http import HttpResponse
 from nbconvert import HTMLExporter
 import nbformat
+from django.core.exceptions import ValidationError
+from scripts.TestSystem.master_nb_formatter import format_notebook
 
 # import myproject.settings
 from pathlib import Path
@@ -107,19 +109,42 @@ def create_lab(request):
             lab_name = form.cleaned_data['labname']
             template_file = request.FILES['template_file']
             
+            # Validate file extension
+            if not template_file.name.endswith('.ipynb'):
+                form.add_error('template_file', 'Only Jupyter notebook (.ipynb) files are allowed.')
+                context = {
+                    'lab_choice_form': form,
+                    'documents': Document.objects.all(),
+                    'form': DocumentForm(),
+                }
+                return render(request, 'dashboard.html', context)
+            
             # Create the lab directory if it doesn't exist
             lab_dir = os.path.join(settings.LABS_ROOT, lab_name)
             os.makedirs(lab_dir, exist_ok=True)
             
-            # Save the template file
-            file_path = os.path.join(lab_dir, template_file.name)
-            with open(file_path, 'wb+') as destination:
+            # Save the template file temporarily
+            temp_path = os.path.join(lab_dir, template_file.name)
+            with open(temp_path, 'wb+') as destination:
                 for chunk in template_file.chunks():
                     destination.write(chunk)
             
-            # Create a new LabChoice instance and save it
-            LabChoice.objects.create(name=lab_name)
-            return redirect('dashboard')
+            try:
+                # Format the notebook and get the paths of generated files
+                public_path, private_path = format_notebook(temp_path, os.path.join(lab_dir, lab_name))
+                
+                # Clean up the temporary file
+                os.remove(temp_path)
+                
+                # Create a new LabChoice instance and save it
+                LabChoice.objects.create(name=lab_name)
+                return redirect('dashboard')
+                
+            except Exception as e:
+                form.add_error('template_file', f'Error processing notebook: {str(e)}')
+                # Clean up on error
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
     else:
         form = LabChoiceForm()
     

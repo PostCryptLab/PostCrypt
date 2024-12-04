@@ -1,5 +1,6 @@
 # lokalne pomocnicze skrypty
 testsite/getenv.sh
+testsite/viewdb.sh
 
 testsite/myapp/__pycache__/
 testsite/myapp/media/
