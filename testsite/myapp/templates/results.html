@@ -2,12 +2,92 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Results</title>
+    <title>Test Results</title>
+    <style>
+        .result-card {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { color: green; }
+        .failed { color: red; }
+        .skipped { color: orange; }
+        .test-details {
+            margin-left: 20px;
+        }
+        .summary-section {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+    </style>
 </head>
 <body>
-    {% for line in response %}
-        <p>{{ line }}</p>
-    {% endfor %}
+    <h1>Test Results</h1>
+
+    {% if results %}
+        {% if is_single %}
+            <!-- Single Student Results -->
+            <div class="result-card">
+                <h2>Results for {{ results.student_name }}</h2>
+                <p>Student ID: {{ results.student_id }}</p>
+                <p>File: {{ results.file_name }}</p>
+                <div class="test-summary">
+                    <p class="success">Successes: {{ results.success_count }}/{{ results.total_tests }}</p>
+                    <p class="failed">Failed: {{ results.fail_count }}/{{ results.total_tests }}</p>
+                    <p class="skipped">Skipped: {{ results.skip_count }}/{{ results.total_tests }}</p>
+                </div>
+                <div class="test-details">
+                    <h3>Test Details:</h3>
+                    <ul>
+                    {% for test_name, status in results.test_results %}
+                        <li class="{{ status|lower }}">{{ test_name }}: {{ status }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <!-- Multiple Students Results -->
+            {% for result in results %}
+                <div class="result-card">
+                    <h2>Results for {{ result.student_name }}</h2>
+                    <p>Student ID: {{ result.student_id }}</p>
+                    <p>File: {{ result.file_name }}</p>
+                    <div class="test-summary">
+                        <p class="success">Successes: {{ result.success_count }}/{{ result.total_tests }}</p>
+                        <p class="failed">Failed: {{ result.fail_count }}/{{ result.total_tests }}</p>
+                        <p class="skipped">Skipped: {{ result.skip_count }}/{{ result.total_tests }}</p>
+                    </div>
+                    <div class="test-details">
+                        <h3>Test Details:</h3>
+                        <ul>
+                        {% for test_name, status in result.test_results %}
+                            <li class="{{ status|lower }}">{{ test_name }}: {{ status }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Overall Test Summary -->
+            <div class="summary-section">
+                <h2>Overall Test Summary</h2>
+                <ul>
+                {% for test_name, success, failed, skipped in test_summary %}
+                    <li>
+                        <strong>{{ test_name }}</strong>:
+                        <span class="success">Successes: {{ success }}</span>,
+                        <span class="failed">Failed: {{ failed }}</span>,
+                        <span class="skipped">Skipped: {{ skipped }}</span>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% else %}
+        <p>No test results available.</p>
+    {% endif %}
 
     {% if user.is_authenticated %}
         <form action="{% url 'dashboard' %}">

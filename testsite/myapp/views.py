@@ -12,6 +12,7 @@ from nbconvert import HTMLExporter
 import nbformat
 from django.core.exceptions import ValidationError
 from scripts.TestSystem.master_nb_formatter import format_notebook
+from scripts.TestSystem.labTester import LabTester
 
 # import myproject.settings
 from pathlib import Path
@@ -35,38 +36,40 @@ def courses_view(request):
     return render(request, 'dashboard.html', context)
 
 def my_results_view(request):
-
-    lab_tester_script_path = os.path.join(settings.BASE_DIR, 'scripts', 'TestSystem', 'labTester.py')
-    lab_path = os.path.join(settings.LABS_ROOT, request.POST['labName'])
-
-    print("Result view")
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES['docfile']
             newdoc = Document(docfile=file)
-
             newdoc.lab_type = form.cleaned_data['labName'].name
-
             newdoc.save()
 
-            proc = subprocess.run(["python3", lab_tester_script_path,
-                                   newdoc.docfile.path], universal_newlines=False,
-                                  stdout=subprocess.PIPE, encoding="utf-8")
-
-            context = {'response': proc.stdout.splitlines()}
+            # Pass the full path of the file for single file testing
+            tester = LabTester(newdoc.docfile.path, None)
+            results = tester.run_tests()
+            
+            context = {
+                'results': results,
+                'test_summary': tester.get_test_summary(),
+                'lab_name': newdoc.lab_type
+            }
             return render(request, 'results.html', context)
 
     if request.method == 'GET':
-        print(request.GET)
-        proc = subprocess.run(["python3", lab_tester_script_path, lab_path], 
-                              universal_newlines=False,
-                              stdout=subprocess.PIPE, encoding="utf-8")
-
-        # for text_line in proc.stdout.splitlines():
-        #     print(text_line)
-
-        context = {'response': proc.stdout.splitlines()}
+        lab_name = request.GET.get('labName')
+        if not lab_name:
+            return HttpResponse("Lab name not provided", status=400)
+            
+        lab_dir = os.path.join(settings.LABS_ROOT, lab_name)
+        # For directory testing, pass the lab name and directory
+        tester = LabTester(lab_name, lab_dir)
+        results = tester.run_tests()
+        
+        context = {
+            'results': results,
+            'test_summary': tester.get_test_summary(),
+            'lab_name': lab_name
+        }
         return render(request, 'results.html', context)
 
 
