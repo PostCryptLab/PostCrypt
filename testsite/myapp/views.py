@@ -20,7 +20,7 @@ import subprocess
 import os
 
 def home(request):
-    Document.objects.all().delete()
+    # Document.objects.all().delete()
     context = {'form': DocumentForm()}
     return render(request, 'list.html', context)
 
@@ -36,7 +36,6 @@ def courses_view(request):
     return render(request, 'dashboard.html', context)
 
 def my_results_view(request):
-
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
