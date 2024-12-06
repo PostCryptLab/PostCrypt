@@ -52,11 +52,9 @@ def process_code_block(code, metadata):
         return ""
     return new_code_cell
 
-
-if __name__ == '__main__':
-    nb_name = "helloworld"
-    master_nb_path = nb_name + ".ipynb"
-    master_nb = nbformat.read(master_nb_path, as_version=4)
+def format_notebook(input_path, lab_name):
+    """Format a notebook and create public/private versions."""
+    master_nb = nbformat.read(input_path, as_version=4)
     master_nb_private = copy.deepcopy(master_nb)
 
     for i, cell in enumerate(master_nb["cells"]):
@@ -64,18 +62,25 @@ if __name__ == '__main__':
             try:
                 cell["source"] = process_code_block(cell["source"], cell['metadata'])
                 master_nb_private["cells"][i]["metadata"] = copy.deepcopy(cell['metadata'])
-                if cell["source"] == "":
-                    pass
             except:
                 pass
 
-    nbformat.write(master_nb_private, nb_name + "_private.ipynb", version=4)
+    # Create private version
+    private_path = f"{lab_name}_private.ipynb"
+    nbformat.write(master_nb_private, private_path, version=4)
 
-    for i, cell in enumerate(master_nb["cells"]):
-        if cell["cell_type"] == "code" and cell["source"] == "":
-            master_nb["cells"].remove(cell)
+    # Remove empty cells and create public version
+    master_nb["cells"] = [cell for cell in master_nb["cells"] 
+                         if not (cell["cell_type"] == "code" and cell["source"] == "")]
+    public_path = f"{lab_name}_pub.ipynb"
+    nbformat.write(master_nb, public_path, version=4)
+    
+    return public_path, private_path
 
-    nbformat.write(master_nb, nb_name + "_pub.ipynb", version=4)
+if __name__ == '__main__':
+    nb_name = "helloworld"
+    master_nb_path = nb_name + ".ipynb"
+    format_notebook(master_nb_path, nb_name)
 
 
 

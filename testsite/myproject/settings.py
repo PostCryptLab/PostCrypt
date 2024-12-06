@@ -124,6 +124,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+LABS_ROOT = os.path.join(MEDIA_ROOT, 'labs')
+os.makedirs(LABS_ROOT, exist_ok=True)
 
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'

@@ -1,18 +1,33 @@
 from django import forms
+from .models import LabChoice
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-
-
-lab_choices = [
-    ('lab1', 'lab1'),
-    ('lab2', 'lab2'),
-    ('lab3', 'lab3'),
-]
-
+import re
+from django.core.exceptions import ValidationError
 
 class DocumentForm(forms.Form):
-    docfile = forms.FileField(label='Wybierz plik')
-    labName = forms.CharField(label="Wybierz nazwe labolatorium", widget=forms.Select(choices=lab_choices))
+    docfile = forms.FileField(label='Select a file')
+    labName = forms.ModelChoiceField(
+        label="Choose lab number",
+        queryset=LabChoice.objects.all(),
+        widget=forms.Select,
+        to_field_name='name'
+    )
+
+
+
+class LabChoiceForm(forms.Form):
+    labname = forms.CharField(label="Lab Name", max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Enter lab name'}))
+    template_file = forms.FileField(label='Upload Lab Template')
+
+    def clean_labname(self):
+        labname = self.cleaned_data['labname']
+        # Ensure safe directory name
+        if not re.match(r'^[a-zA-Z0-9_-]+$', labname):
+            raise ValidationError(
+                'Lab name can only contain letters, numbers, underscores and hyphens'
+            )
+        return labname
 
 
 class RegistrationForm(UserCreationForm):

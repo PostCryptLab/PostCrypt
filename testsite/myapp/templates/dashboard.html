@@ -53,8 +53,8 @@
 
 <!-- Główna zawartość strony -->
 <div class="content-wrap">
-     <!-- Sekcja przeglądania dokumentów -->
-     <section class="section">
+    <!-- Sekcja przeglądania dokumentów -->
+    <section class="section">
         <div class="container">
             <h1 class="title">Wysłane Laboratoria</h1>
 
@@ -88,9 +88,36 @@
             </form>
         </div>
     </section>
-</div>
+    <!-- Sekcja tworzenia nowego laboratorium -->
+    <section class="section"></section>
+        <div class="container">
+            <h1 class="title">Create a New Lab</h1>
+            <form action="{% url 'create_lab' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="field">
+                    <label class="label">{{ lab_choice_form.labname.label_tag }}</label>
+                    <div class="control">
+                        {{ lab_choice_form.labname }}
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">{{ lab_choice_form.template_file.label_tag }}</label>
+                    <div class="control">
+                        {{ lab_choice_form.template_file }}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Add Lab</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
 </div>
 
+    
+    
 <!-- Stopka -->
 {% include 'footer.html' %}
 
