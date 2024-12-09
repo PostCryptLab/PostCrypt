@@ -97,6 +97,25 @@
             </section>
         </div>
 
+        <!-- Add this section after the existing form section -->
+        <section class="section">
+            <div class="container">
+                <h1 class="title">Pobierz zadania</h1>
+                <div class="field">
+                    <label class="label">Dostępne labolatoria:</label>
+                    <div class="control">
+                        {% for lab in form.labName.field.queryset %}
+                            <div class="buttons">
+                                <a href="{% url 'download-template' lab.name %}" class="button is-info">
+                                    Pobierz templatke {{ lab.name }}
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Stopka -->
             {% include 'footer.html' %}    
     </body>
