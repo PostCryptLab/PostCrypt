@@ -12,4 +12,5 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('results', views.my_results_view, name="results-view"),
     path('documents/<int:document_id>/', views.view_document, name='view_document'),
+    path('generate-one-time-code/', views.generate_one_time_code, name='generate_one_time_code'),
 ]

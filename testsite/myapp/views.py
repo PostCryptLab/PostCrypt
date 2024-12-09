@@ -1,10 +1,9 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Document, LabChoice
-from .forms import DocumentForm, LabChoiceForm
+from .models import Document, LabChoice, OneTimeCode
+from .forms import DocumentForm, LabChoiceForm, RegistrationForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
-from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.http import HttpResponse
@@ -157,3 +156,9 @@ def create_lab(request):
         'form': DocumentForm(),
     }
     return render(request, 'dashboard.html', context)
+from django.utils.crypto import get_random_string
+@login_required
+def generate_one_time_code(request):
+    code = get_random_string(length=10)
+    OneTimeCode.objects.create(code=code, user=request.user)
+    return render(request, 'one_time_code.html', {'code': code})

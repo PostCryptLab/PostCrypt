@@ -1,9 +1,10 @@
 from django import forms
-from .models import LabChoice
+from .models import LabChoice, OneTimeCode
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 import re
 from django.core.exceptions import ValidationError
+
 
 class DocumentForm(forms.Form):
     docfile = forms.FileField(label='Select a file')
@@ -32,14 +33,26 @@ class LabChoiceForm(forms.Form):
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    one_time_code = forms.CharField(max_length=10, required=True)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2', 'one_time_code']
+
+    def clean_one_time_code(self):
+        one_time_code = self.cleaned_data['one_time_code']
+        try:
+            code_obj = OneTimeCode.objects.get(code=one_time_code, used=False)
+        except OneTimeCode.DoesNotExist:
+            raise forms.ValidationError("Invalid one-time code.")
+        return one_time_code
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
+            one_time_code = OneTimeCode.objects.get(code=self.cleaned_data['one_time_code'])
+            one_time_code.used = True
+            one_time_code.save()
         return user
