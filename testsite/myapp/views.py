@@ -24,15 +24,19 @@ def home(request):
     context = {'form': DocumentForm()}
     return render(request, 'list.html', context)
 
-@login_required # type: ignore
+@login_required
 def courses_view(request):
     documents = Document.objects.all()
+    one_time_code = get_random_string(10) 
+    OneTimeCode.objects.create(code=one_time_code, user=request.user)
+
     context = {
         'documents': documents, 
         'form': DocumentForm(),
         'user': request.user,
-        'lab_choice_form': LabChoiceForm()
-        }
+        'lab_choice_form': LabChoiceForm(),
+        'one_time_code': one_time_code if one_time_code else None
+    }
     return render(request, 'dashboard.html', context)
 
 def my_results_view(request):
@@ -159,8 +163,3 @@ def create_lab(request):
     return render(request, 'dashboard.html', context)
 
 
-@login_required
-def generate_one_time_code(request):
-    code = get_random_string(length=10)
-    OneTimeCode.objects.create(code=code, user=request.user)
-    return render(request, 'one_time_code.html', {'code': code})

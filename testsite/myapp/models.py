@@ -38,6 +38,9 @@ class OneTimeCode(models.Model):
         return check_password(raw_code, self.code)
     
     def save(self, *args, **kwargs):
+        if not self.pk: #Only when creating new instance
+            OneTimeCode.objects.filter(user=self.user, used=False).delete()
+
         if not self.code.startswith('pbkdf2_sha256$'):
             self.set_code(self.code)
         super().save(*args, **kwargs)

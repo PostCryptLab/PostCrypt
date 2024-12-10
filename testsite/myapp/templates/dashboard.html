@@ -114,10 +114,28 @@
             </form>
         </div>
     </section>
-</div>
 
-    
-    
+    <!-- Sekcja generowania kodu jednorazowego -->
+    <section class="section" id="generate-code-section">
+        <div class="container">
+            <h1 class="title">Generowanie kodu jednorazowego</h1>
+            <form action="{% url 'dashboard'%}" method="post">
+                {% csrf_token %}
+                <div class="field">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Generate Code</button>
+                    </div>
+                </div>
+            </form>
+            {% if one_time_code %}
+                <div class="notification is-info mt-4">
+                    <p>Przekaż ten kod osobie która chce się zalogować:</p>
+                    <h2 class="has-text-weight-bold">{{ one_time_code }}</h2>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</div>
 <!-- Stopka -->
 {% include 'footer.html' %}
 
