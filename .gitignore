@@ -6,3 +6,4 @@ testsite/myapp/__pycache__/
 testsite/myapp/media/
 
 tmp/
+.cursorrules
