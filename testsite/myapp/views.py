@@ -12,7 +12,7 @@ import nbformat
 from django.core.exceptions import ValidationError
 from scripts.TestSystem.master_nb_formatter import format_notebook
 from scripts.TestSystem.labTester import LabTester
-
+from django.utils.crypto import get_random_string
 # import myproject.settings
 from pathlib import Path
 import subprocess
@@ -156,7 +156,8 @@ def create_lab(request):
         'form': DocumentForm(),
     }
     return render(request, 'dashboard.html', context)
-from django.utils.crypto import get_random_string
+
+
 @login_required
 def generate_one_time_code(request):
     code = get_random_string(length=10)

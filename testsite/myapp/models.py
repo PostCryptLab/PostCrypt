@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from encrypted_model_fields.fields import EncryptedCharField
 def upload_location(instance, filename):
     return 'labs/{}/{}'.format(instance.lab_type, filename)
 
@@ -16,7 +16,7 @@ class LabChoice(models.Model):
         return self.name
 
 class OneTimeCode(models.Model):
-    code = models.CharField(max_length=10, unique=True)
+    code = EncryptedCharField(max_length=10, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='one_time_codes')
     used = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
