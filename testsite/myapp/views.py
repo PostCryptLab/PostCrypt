@@ -13,6 +13,7 @@ import nbformat
 from django.core.exceptions import ValidationError
 from scripts.TestSystem.master_nb_formatter import format_notebook
 from scripts.TestSystem.labTester import LabTester
+from django.http import FileResponse
 from django.utils.crypto import get_random_string
 # import myproject.settings
 from pathlib import Path
@@ -162,4 +163,10 @@ def create_lab(request):
     }
     return render(request, 'dashboard.html', context)
 
-
+def download_lab_template(request, lab_name):
+    file_path = os.path.join(settings.LABS_ROOT, lab_name, f"{lab_name}_pub.ipynb")
+    if os.path.exists(file_path):
+        response = FileResponse(open(file_path, 'rb'))
+        response['Content-Disposition'] = f'attachment; filename="{lab_name}_pub.ipynb"'
+        return response
+    return HttpResponse("Template not found", status=404)

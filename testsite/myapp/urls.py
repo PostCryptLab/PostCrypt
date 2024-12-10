@@ -12,5 +12,5 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('results', views.my_results_view, name="results-view"),
     path('documents/<int:document_id>/', views.view_document, name='view_document'),
-
+    path('download-template/<str:lab_name>/', views.download_lab_template, name='download-template'),
 ]
