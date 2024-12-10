@@ -1,9 +1,10 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from .models import Document, LabChoice, OneTimeCode
-from .forms import DocumentForm, LabChoiceForm, RegistrationForm
+from .forms import DocumentForm, LabChoiceForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
+from .forms import RegistrationForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.http import HttpResponse
