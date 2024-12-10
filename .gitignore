@@ -5,4 +5,6 @@ testsite/viewdb.sh
 testsite/myapp/__pycache__/
 testsite/myapp/media/
 
+testsite/scripts/TestSystem/__pycache__
+
 tmp/
