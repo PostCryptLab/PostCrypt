@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Document, LabChoice
+from .models import Document, LabChoice, OneTimeCode
 from .forms import DocumentForm, LabChoiceForm
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
@@ -14,9 +14,7 @@ from django.core.exceptions import ValidationError
 from scripts.TestSystem.master_nb_formatter import format_notebook
 from scripts.TestSystem.labTester import LabTester
 from django.http import FileResponse
-import os
-
-
+from django.utils.crypto import get_random_string
 # import myproject.settings
 from pathlib import Path
 import subprocess
@@ -27,15 +25,19 @@ def home(request):
     context = {'form': DocumentForm()}
     return render(request, 'list.html', context)
 
-@login_required # type: ignore
+@login_required
 def courses_view(request):
     documents = Document.objects.all()
+    one_time_code = get_random_string(10) 
+    OneTimeCode.objects.create(code=one_time_code, user=request.user)
+
     context = {
         'documents': documents, 
         'form': DocumentForm(),
         'user': request.user,
-        'lab_choice_form': LabChoiceForm()
-        }
+        'lab_choice_form': LabChoiceForm(),
+        'one_time_code': one_time_code if one_time_code else None
+    }
     return render(request, 'dashboard.html', context)
 
 def my_results_view(request):
@@ -160,7 +162,6 @@ def create_lab(request):
         'form': DocumentForm(),
     }
     return render(request, 'dashboard.html', context)
-
 
 def download_lab_template(request, lab_name):
     file_path = os.path.join(settings.LABS_ROOT, lab_name, f"{lab_name}_pub.ipynb")

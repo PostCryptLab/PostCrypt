@@ -8,3 +8,4 @@ testsite/myapp/media/
 testsite/scripts/TestSystem/__pycache__
 
 tmp/
+.cursorrules
