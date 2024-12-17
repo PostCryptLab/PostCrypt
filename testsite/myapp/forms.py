@@ -1,5 +1,5 @@
 from django import forms
-from .models import LabChoice
+from .models import LabChoice, OneTimeCode
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 import re
@@ -32,14 +32,31 @@ class LabChoiceForm(forms.Form):
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    one_time_code = forms.CharField(
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'input', 'placeholder': 'Enter your one-time code'})
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2', 'one_time_code']
+
+    def clean_one_time_code(self):
+        one_time_code = self.cleaned_data['one_time_code']
+        try:
+            code_obj = OneTimeCode.get_by_raw_code(one_time_code)
+            if code_obj.is_used:
+                raise forms.ValidationError("This code has already been used.")
+        except OneTimeCode.DoesNotExist:
+            raise forms.ValidationError("Invalid one-time code.")
+        return one_time_code
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
+            # Mark the one-time code as used
+            code_obj = OneTimeCode.get_by_raw_code(self.cleaned_data['one_time_code'])
+            code_obj.mark_as_used()
         return user

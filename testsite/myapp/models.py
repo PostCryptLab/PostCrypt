@@ -37,6 +37,34 @@ class OneTimeCode(models.Model):
         """
         return check_password(raw_code, self.code)
     
+    @classmethod
+    def get_by_raw_code(cls, raw_code):
+        """
+        Get a OneTimeCode instance by raw (unhashed) code
+        :param raw_code: The raw code to search for
+        :return: OneTimeCode instance
+        :raises: OneTimeCode.DoesNotExist if no matching code is found
+        """
+        for code in cls.objects.all():
+            if code.check_code(raw_code):
+                return code
+        raise cls.DoesNotExist("No OneTimeCode found matching the provided code")
+    
+    def mark_as_used(self):
+        """
+        Mark the code as used and save it
+        """
+        self.used = True
+        self.save()
+
+    @property
+    def is_used(self):
+        """
+        Check if the code has been used
+        :return: Boolean indicating if code is used
+        """
+        return self.used
+       
     def save(self, *args, **kwargs):
         if not self.pk: #Only when creating new instance
             OneTimeCode.objects.filter(user=self.user, used=False).delete()
