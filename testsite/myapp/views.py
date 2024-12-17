@@ -87,12 +87,13 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  
+            login(request, user)
             return redirect('dashboard')
     else:
         form = RegistrationForm()
     
     return render(request, 'register.html', {'form': form})
+    
 
 @login_required
 def view_document(request, document_id):
