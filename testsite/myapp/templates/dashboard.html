@@ -5,40 +5,129 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PostCrypt</title>
+    <title>PostCrypt - Instructor Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
-    <!-- <link rel="stylesheet" href="{% static 'styles.css' %}"> -->
     <style>
         html {
             min-height: 100%;
             display: flex;
             flex-direction: column;
         }
-        
+
         body {
             display: flex;
             flex-direction: column;
             flex: 1;
         }
-        
+
         .content-wrap {
             flex: 1;
+            padding: 20px;
         }
-        
+
         .footer {
             background-color: #f5f5f5;
             padding: 1rem;
             margin-top: auto;
         }
+
+        .notification {
+            margin-top: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .title {
+            margin-bottom: 20px !important;
+        }
+
+        .subtitle {
+            margin-bottom: 10px !important;
+        }
+
+        .button {
+            margin-top: 10px;
+        }
+
+        .filter-section {
+            margin-bottom: 20px;
+        }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .document-item a {
+            margin-right: 10px;
+            flex-grow: 1;
+            color: #3273dc;
+            text-decoration: none;
+        }
+
+        .document-item a:hover {
+            text-decoration: underline;
+        }
+
+        .document-item .tag {
+            margin-right: 10px;
+        }
+
+        .delete-button {
+            margin-left: auto;
+        }
+
+        .select {
+            width: 200px;
+        }
+
+        .select select {
+            width: 100%;
+        }
+
+        .form-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-box .field {
+            margin-bottom: 15px;
+        }
+
+        .form-box .label {
+            font-weight: bold;
+        }
+
+        .form-box .input, .form-box .select select {
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .form-box .button {
+            width: 100%;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
 
-<!-- Pasek nawigacyjny -->
+<!-- Navigation Bar -->
 <nav class="navbar is-light" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
         <a class="navbar-item" href="#">
-            <strong>Prowadzący {{ user.username }}</strong>
+            <strong>Teacher Dashboard - {{ user.username }}</strong>
         </a>
     </div>
     <div class="navbar-end">
@@ -51,75 +140,145 @@
     </div>
 </nav>
 
-<!-- Główna zawartość strony -->
+<!-- Main Content -->
 <div class="content-wrap">
-    <!-- Sekcja przeglądania dokumentów -->
+    <!-- Section: Submitted Labs -->
     <section class="section">
         <div class="container">
-            <h1 class="title">Wysłane Laboratoria</h1>
+            <h1 class="title">Submitted Labs</h1>
 
+            <!-- Folder Filtration -->
+            <div class="filter-section">
+                <form method="get" action="{% url 'dashboard' %}">
+                    <div class="field has-addons">
+                        <div class="control">
+                            <div class="select">
+                                <select name="lab_type">
+                                    <option value="">All Folders</option>
+                                    {% for folder in folders %}
+                                        <option value="{{ folder }}" {% if selected_folder == folder %}selected{% endif %}>
+                                            {{ folder }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control">
+                            <button type="submit" class="button is-primary">Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- List of Documents -->
             {% if documents %}
-                <h2 class="subtitle">wszystkie laboratoria w bazie danych:</h2>
-                <ul>
+                <h2 class="subtitle">All labs in the database:</h2>
+                <div class="box">
                     {% for document in documents %}
-                        <li>
+                        <div class="document-item">
                             <a href="{% url 'view_document' document.id %}">{{ document.docfile.name }}</a>
-                        </li>
+                            <span class="tag is-info">{{ document.lab_type }}</span>
+                            <form action="{% url 'delete_lab' document.id %}" method="post" class="delete-button">
+                                {% csrf_token %}
+                                <button type="submit" class="button is-danger is-small" onclick="return confirm('Are you sure you want to delete this lab?');">Delete</button>
+                            </form>
+                        </div>
                     {% endfor %}
-                </ul>
+                </div>
             {% else %}
-                <p>No documents.</p>
+                <div class="notification is-warning">
+                    No documents found.
+                </div>
             {% endif %}
         </div>
     </section>
 
-    <!-- Sekcja automatycznego testowania laboratoriów -->
+    <!-- Section: Test a Lab -->
     <section class="section">
         <div class="container">
-            <h1 class="title">Przetestuj Laboratorium</h1>
-            <form action="{% url 'results-view' %}" method="get">
-                <div class="field">
-                    <label class="label">{{ form.labName.label }}</label>
-                    <div class="control">
-                        {{ form.labName }}
+            <h1 class="title">Test a Lab</h1>
+            <div class="form-box">
+                <form action="{% url 'results-view' %}" method="get">
+                    <div class="field">
+                        <label class="label">{{ form.labName.label }}</label>
+                        <div class="control">
+                            {{ form.labName }}
+                        </div>
                     </div>
-                </div>
-                <p><button type="submit" class="button is-primary">Test Lab</button></p>
-            </form>
+                    <div class="field">
+                        <div class="control">
+                            <button type="submit" class="button is-primary is-fullwidth">Test Lab</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </section>
-    <!-- Sekcja tworzenia nowego laboratorium -->
-    <section class="section"></section>
+
+    <!-- Section: Create a New Lab -->
+    <section class="section">
         <div class="container">
             <h1 class="title">Create a New Lab</h1>
-            <form action="{% url 'create_lab' %}" method="post" enctype="multipart/form-data">
+            <div class="form-box">
+                <form action="{% url 'create_lab' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label class="label">{{ lab_choice_form.labname.label }}</label>
+                        <div class="control">
+                            {{ lab_choice_form.labname }}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">{{ lab_choice_form.template_file.label }}</label>
+                        <div class="control">
+                            {{ lab_choice_form.template_file }}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <button type="submit" class="button is-primary is-fullwidth">Add Lab</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section: Delete Lab Type -->
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Delete Lab Type</h1>
+            <form action="{% url 'delete_lab_type' %}" method="post">
                 {% csrf_token %}
                 <div class="field">
-                    <label class="label">{{ lab_choice_form.labname.label_tag }}</label>
+                    <label class="label">Select Lab Type to Delete</label>
                     <div class="control">
-                        {{ lab_choice_form.labname }}
+                        <div class="select">
+                            <select name="lab_type_id" required>
+                                <option value="" disabled selected>Select a Lab Type</option>
+                                {% for lab_type in lab_types %}
+                                    <option value="{{ lab_type.id }}">{{ lab_type.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">{{ lab_choice_form.template_file.label_tag }}</label>
                     <div class="control">
-                        {{ lab_choice_form.template_file }}
-                    </div>
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <button type="submit" class="button is-primary">Add Lab</button>
+                        <button type="submit" class="button is-danger" onclick="return confirm('Are you sure you want to delete this lab type and all associated documents?');">
+                            Delete Lab Type
+                        </button>
                     </div>
                 </div>
             </form>
         </div>
     </section>
 
-    <!-- Sekcja generowania kodu jednorazowego -->
-    <section class="section" id="generate-code-section">
+    <!-- Section: Generate One-Time Code -->
+    <section class="section">
         <div class="container">
-            <h1 class="title">Generowanie kodu jednorazowego</h1>
-            <form action="{% url 'dashboard'%}" method="post">
+            <h1 class="title">Generate One-Time Code</h1>
+            <form action="{% url 'dashboard' %}" method="post">
                 {% csrf_token %}
                 <div class="field">
                     <div class="control">
@@ -129,15 +288,20 @@
             </form>
             {% if one_time_code %}
                 <div class="notification is-info mt-4">
-                    <p>Przekaż ten kod osobie która chce się zalogować:</p>
+                    <p>Share this code with the person who wants to log in:</p>
                     <h2 class="has-text-weight-bold">{{ one_time_code }}</h2>
                 </div>
             {% endif %}
         </div>
     </section>
 </div>
-<!-- Stopka -->
-{% include 'footer.html' %}
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="content has-text-centered">
+        <strong>PostCrypt</strong> by <a href="https://github.com/hitkon">Ivan Zarzitski</a>. 2024
+    </div>
+</footer>
 
 </body>
 </html>

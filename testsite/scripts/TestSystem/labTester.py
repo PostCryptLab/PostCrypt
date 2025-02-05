@@ -4,13 +4,14 @@ import nbformat
 import sys
 import glob
 import types
+import numpy as np
+import math
 
 class LabTester:
     def __init__(self, lab_name, test_dir=None):
         if test_dir is None:
             self.base_dir = os.path.dirname(lab_name)
             self.lab_name = os.path.basename(os.path.dirname(lab_name))
-
         else:
             self.base_dir = test_dir
             self.lab_name = lab_name
@@ -37,10 +38,12 @@ class LabTester:
                 self.test_info.append([0, 0, 0])
 
             if cell["cell_type"] == "code":
+                # print(cell['source'])
                 try:
                     exec(cell['source'])
-                except:
+                except Exception as e:
                     print("Failed to execute cell")
+                    print(e)
 
         # Collect test functions
         for name in self.test_names:
@@ -80,9 +83,10 @@ class LabTester:
                 metadata = cell['metadata']
                 if cell['cell_type'] == "code":
                     try:
-                        exec(cell['source'])
-                    except RuntimeError:
-                        print("Failed to execute cell")
+                        exec(cell['source'], globals())
+                    except Exception as e:
+                        print(cell['source'])
+                        print("Failed to execute cell2", e)
 
                 if "cell_type" in metadata and metadata["cell_type"] == "student_info":
                     try:
@@ -96,7 +100,7 @@ class LabTester:
 
             for i, test in enumerate(self.tests_func):
                 try:
-                    
+                    test()
                     success_cnt += 1
                     self.test_info[i][0] += 1
                     test_results.append((self.test_names[i], "Success"))
@@ -104,10 +108,11 @@ class LabTester:
                     fail_cnt += 1
                     self.test_info[i][1] += 1
                     test_results.append((self.test_names[i], "Failed"))
-                except RuntimeError:
+                except RuntimeError or NotImplementedError:
                     skip_cnt += 1
                     self.test_info[i][2] += 1
                     test_results.append((self.test_names[i], "Skipped"))
+
             
             return {
                 'student_name': student_info[0],
@@ -121,7 +126,7 @@ class LabTester:
             }
 
         except Exception as e:
-            print(f"Error with notebook: {file_name}")
+            print(f"Error with notebook: {file_name}", e)
             return None
 
     def get_test_summary(self):

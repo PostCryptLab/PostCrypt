@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - EduPlatform{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="display-4">Welcome to EduPlatform</h1>
+    <p class="lead">Your gateway to knowledge and skills.</p>
+    <div class="card mx-auto" style="max-width: 500px;">
+        <div class="card-body">
+            <h2 class="card-title">Upload a Document</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary w-100">Upload Document</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

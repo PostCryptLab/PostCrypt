@@ -9,27 +9,56 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
         <!-- <link rel="stylesheet" href="{% static 'styles.css' %}"> -->
         <style>
-            html {
-                min-height: 100%;
-                display: flex;
-                flex-direction: column;
-            }
-            
-            body {
-                display: flex;
-                flex-direction: column;
-                flex: 1;
-            }
-            
-            .content-wrap {
-                flex: 1;
-            }
-            
-            .footer {
-                background-color: #f5f5f5;
-                padding: 1rem;
-                margin-top: auto;
-            }
+            html, body {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa; /* Light gray background */
+}
+
+.content-wrap {
+    flex: 1;
+}
+
+.navbar {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1.title {
+    color: #333;
+    text-align: center;
+    font-size: 24px;
+}
+
+.field {
+    margin-bottom: 15px;
+}
+
+.button {
+    transition: all 0.3s ease-in-out;
+}
+
+.button:hover {
+    transform: scale(1.05);
+}
+
+.footer {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    text-align: center;
+    margin-top: auto;
+}
+
         </style>
     </head>
 
@@ -63,7 +92,7 @@
             <!-- Formularz -->
             <section class="section">
                 <div class="container">
-                    <h1 class="title">Wyślij labolatorium</h1>
+                    <h1 class="title">Send lab</h1>
                     <form action="{% url 'results-view' %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         
@@ -87,7 +116,7 @@
 
                         <div class="field">
                             <div class="control">
-                                <button type="submit" class="button is-success">Wyślij</button>
+                                <button type="submit" class="button is-success">Send</button>
                             </div>
                         </div>
 
@@ -100,14 +129,14 @@
         <!-- Add this section after the existing form section -->
         <section class="section">
             <div class="container">
-                <h1 class="title">Pobierz zadania</h1>
+                <h1 class="title">Download Tasks</h1>
                 <div class="field">
-                    <label class="label">Dostępne labolatoria:</label>
+                    <label class="label">Current labs:</label>
                     <div class="control">
                         {% for lab in form.labName.field.queryset %}
                             <div class="buttons">
                                 <a href="{% url 'download-template' lab.name %}" class="button is-info">
-                                    Pobierz templatke {{ lab.name }}
+                                    Download lab template {{ lab.name }}
                                 </a>
                             </div>
                         {% endfor %}

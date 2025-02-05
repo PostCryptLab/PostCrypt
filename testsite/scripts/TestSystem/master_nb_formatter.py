@@ -1,4 +1,5 @@
 import copy
+import sys
 
 import nbformat as nbformat
 
@@ -74,12 +75,18 @@ def format_notebook(input_path, lab_name):
                          if not (cell["cell_type"] == "code" and cell["source"] == "")]
     public_path = f"{lab_name}_pub.ipynb"
     nbformat.write(master_nb, public_path, version=4)
-    
+    # print("Paths: ", public_path, private_path)
     return public_path, private_path
 
 if __name__ == '__main__':
     nb_name = "helloworld"
     master_nb_path = nb_name + ".ipynb"
+
+    if len(sys.argv) == 3:
+        nb_name = sys.argv[1]
+        master_nb_path = sys.argv[2]
+
+
     format_notebook(master_nb_path, nb_name)
 
 

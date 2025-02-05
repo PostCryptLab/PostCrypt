@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - EduPlatform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Dashboard</h1>
+
+    <!-- Documents Section -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">Your Documents</h2>
+            <ul class="list-group">
+                {% for document in documents %}
+                <li class="list-group-item">
+                    <a href="{% url 'view_document' document.id %}">{{ document.lab_type }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Upload Document Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">Upload a Document</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary w-100">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Lab Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">Create a New Lab</h2>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ lab_choice_form.as_p }}
+                <button type="submit" class="btn btn-primary w-100">Create Lab</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- One-Time Code -->
+    {% if one_time_code %}
+    <div class="alert alert-info">
+        <strong>Your one-time code:</strong> {{ one_time_code }}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

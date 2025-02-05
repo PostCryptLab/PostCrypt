@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Download Template - EduPlatform{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="display-4">Download Lab Template</h1>
+    <p>Click the button below to download the template for {{ lab_name }}.</p>
+    <a href="{% url 'download-template' lab_name %}" class="btn btn-primary">Download Template</a>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+{% endblock %}

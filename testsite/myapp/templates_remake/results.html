@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Test Results - EduPlatform{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Test Results for {{ lab_name }}</h1>
+
+    <!-- Test Summary -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">Summary</h2>
+            <p>{{ test_summary }}</p>
+        </div>
+    </div>
+
+    <!-- Detailed Results -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h2 class="card-title">Detailed Results</h2>
+            <pre>{{ results }}</pre>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+</div>
+{% endblock %}
